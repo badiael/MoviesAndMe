@@ -8,22 +8,10 @@
 
 import React, { Component } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
+import Search from "./Components/Search";
 
 export default class App extends Component {
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Welcome to MoviesAndMe App!</Text>
-      </View>
-    );
+    return <Search />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
-  }
-});
