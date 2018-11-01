@@ -5,7 +5,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 
 class FilmItem extends React.Component {
   render() {
-    //console.log(this.props);
+    //console.log(this.props.film);
     const film = this.props.film;
     return (
       <View style={styles.main_container}>

@@ -1,33 +1,46 @@
+// Components/Search.js
+
 import React from "react";
 import {
   StyleSheet,
   View,
   TextInput,
   Button,
-  FlatList,
-  Text
+  Text,
+  FlatList
 } from "react-native";
 import FilmItem from "./FilmItem";
-
 import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
-//import films from "../Helpers/filmsData";
 
-export default class Search extends React.Component {
+class Search extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { films: [] };
+    this.searchedText = ""; // Initialisation de notre donnée searchedText en dehors du state
+    this.state = {
+      films: []
+    };
   }
   _loadFilms() {
-    getFilmsFromApiWithSearchedText("star").then(data => {
-      this.setState = { films: data.results };
-    });
+    if (this.searchedText.length > 0) {
+      // Seulement si le texte recherché n'est pas vide
+      getFilmsFromApiWithSearchedText(this.searchedText).then(data => {
+        this.setState({ films: data.results });
+      });
+    }
+  }
+
+  _searchTextInputChanged(text) {
+    this.searchedText = text; // Modification du texte recherché à chaque saisie de texte, sans passer par le setState comme avant
   }
   render() {
-    //this._loadFilms();
-    console.log("render");
+    console.log("RENDER TWO ");
     return (
-      <View style={{ marginTop: 20 }}>
-        <TextInput style={styles.textinput} placeholder="Titre du film" />
+      <View style={styles.main_container}>
+        <TextInput
+          style={styles.textinput}
+          placeholder="Titre du film"
+          onChangeText={text => this._searchTextInputChanged(text)}
+        />
         <Button
           style={{ height: 50 }}
           title="Rechercher"
@@ -42,6 +55,7 @@ export default class Search extends React.Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
@@ -56,3 +70,5 @@ const styles = StyleSheet.create({
     paddingLeft: 5
   }
 });
+
+export default Search;
