@@ -20,6 +20,8 @@ class Search extends React.Component {
   constructor(props) {
     super(props);
     this.searchedText = ""; // Initialisation de notre donnée searchedText en dehors du state
+    this.page = 0;
+    this.totalPages = 0;
     this.state = {
       films: [],
       isLoading: false
@@ -29,12 +31,16 @@ class Search extends React.Component {
     if (this.searchedText.length > 0) {
       this.setState({ isLoading: true });
       // Seulement si le texte recherché n'est pas vide
-      getFilmsFromApiWithSearchedText(this.searchedText).then(data => {
-        this.setState({
-          films: data.results,
-          isLoading: false
-        });
-      });
+      getFilmsFromApiWithSearchedText(this.searchedText, this.page + 1).then(
+        data => {
+          this.page = data.page;
+          this.totalPages = data.totalPages;
+          this.setState({
+            films: [...this.state.films, ...data.results],
+            isLoading: false
+          });
+        }
+      );
     }
   }
 
@@ -72,7 +78,8 @@ class Search extends React.Component {
           renderItem={({ item }) => <FilmItem film={item} />}
           onEndReachedThreshold={0.5}
           onEndReached={() => {
-            if (this.state.films.length > 0) {
+            if (this.state.films.length > 0 && this.page < this.totalPages) {
+              this._loadFilms();
               console.log("onEndReached");
             }
           }}
