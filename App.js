@@ -7,11 +7,10 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import Search from "./Components/Search";
+import Navigation from "./Navigation/Navigation";
 
 export default class App extends Component {
   render() {
-    return <Search />;
+    return <Navigation />;
   }
 }

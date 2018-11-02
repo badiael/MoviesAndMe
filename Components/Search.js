@@ -11,15 +11,12 @@ import {
   ActivityIndicator
 } from "react-native";
 import FilmItem from "./FilmItem";
-import {
-  getFilmsFromApiWithSearchedText,
-  getImageFromApi
-} from "../API/TMDBApi";
+import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
 
 class Search extends React.Component {
   constructor(props) {
     super(props);
-    this.searchedText = ""; // Initialisation de notre donnée searchedText en dehors du state
+    this.searchedText = "";
     this.page = 0;
     this.totalPages = 0;
     this.state = {
@@ -27,14 +24,14 @@ class Search extends React.Component {
       isLoading: false
     };
   }
+
   _loadFilms() {
     if (this.searchedText.length > 0) {
       this.setState({ isLoading: true });
-      // Seulement si le texte recherché n'est pas vide
       getFilmsFromApiWithSearchedText(this.searchedText, this.page + 1).then(
         data => {
           this.page = data.page;
-          this.totalPages = data.totalPages;
+          this.totalPages = data.total_pages;
           this.setState({
             films: [...this.state.films, ...data.results],
             isLoading: false
@@ -45,8 +42,25 @@ class Search extends React.Component {
   }
 
   _searchTextInputChanged(text) {
-    this.searchedText = text; // Modification du texte recherché à chaque saisie de texte, sans passer par le setState comme avant
+    this.searchedText = text;
   }
+
+  _searchFilms() {
+    this.page = 0;
+    this.totalPages = 0;
+    this.setState(
+      {
+        films: []
+      },
+      () => {
+        this._loadFilms();
+      }
+    );
+  }
+
+  _displayDetailForFilm = idFilm => {
+    console.log("Display film with id " + idFilm);
+  };
 
   _displayLoading() {
     if (this.state.isLoading) {
@@ -57,30 +71,35 @@ class Search extends React.Component {
       );
     }
   }
+
   render() {
-    console.log(this.state.isLoading);
     return (
       <View style={styles.main_container}>
         <TextInput
           style={styles.textinput}
           placeholder="Titre du film"
-          onSubmitEditing={() => this._loadFilms()}
           onChangeText={text => this._searchTextInputChanged(text)}
+          onSubmitEditing={() => this._searchFilms()}
         />
         <Button
           style={{ height: 50 }}
           title="Rechercher"
-          onPress={() => this._loadFilms()}
+          onPress={() => this._searchFilms()}
         />
         <FlatList
           data={this.state.films}
           keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => <FilmItem film={item} />}
+          renderItem={({ item }) => (
+            <FilmItem
+              film={item}
+              displayDetailForFilm={this._displayDetailForFilm}
+            />
+          )}
           onEndReachedThreshold={0.5}
           onEndReached={() => {
             if (this.state.films.length > 0 && this.page < this.totalPages) {
+              // On vérifie également qu'on n'a pas atteint la fin de la pagination (totalPages) avant de charger plus d'éléments
               this._loadFilms();
-              console.log("onEndReached");
             }
           }}
         />
@@ -92,8 +111,7 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
   main_container: {
-    flex: 1,
-    marginTop: 20
+    flex: 1
   },
   textinput: {
     marginLeft: 5,
