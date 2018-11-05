@@ -9,9 +9,11 @@ import {
   ScrollView,
   Image
 } from "react-native";
-import { getFilmDetailFromApi, getImageFromApi } from "../API/TMDBApi";
+import { getFilmDetailFromApi, getImageFromApi, Button } from "../API/TMDBApi";
 import moment from "moment";
 import numeral from "numeral";
+
+import { connect } from "react-redux";
 
 class FilmDetail extends React.Component {
   constructor(props) {
@@ -88,6 +90,7 @@ class FilmDetail extends React.Component {
   }
 
   render() {
+    console.log(this.props);
     return (
       <View style={styles.main_container}>
         {this._displayLoading()}
@@ -141,5 +144,8 @@ const styles = StyleSheet.create({
     marginTop: 5
   }
 });
+const mapStateToProps = state => {
+  return state;
+};
 
-export default FilmDetail;
+export default connect(mapStateToProps)(FilmDetail);

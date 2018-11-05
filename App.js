@@ -1,16 +1,16 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+// App.js
 
-import React, { Component } from "react";
+import React from "react";
 import Navigation from "./Navigation/Navigation";
+import { Provider } from "react-redux";
+import Store from "./Store/configureStore";
 
-export default class App extends Component {
+export default class App extends React.Component {
   render() {
-    return <Navigation />;
+    return (
+      <Provider store={Store}>
+        <Navigation />
+      </Provider>
+    );
   }
 }
